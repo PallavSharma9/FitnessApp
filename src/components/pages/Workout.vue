@@ -4,7 +4,7 @@ import Portal from "../Portal.vue";
 const selectedWorkout = 4;
 const { workout, warmup } = workoutProgram[selectedWorkout];
 
-let selectedExercise = "Around the worlds";
+let selectedExercise = null;
 const exerciseDescription = exerciseDescriptions[selectedExercise];
 </script>
 
