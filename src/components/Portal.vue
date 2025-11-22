@@ -1,9 +1,21 @@
-<script setup></script>
+<script setup>
+// const props = defineProps
+// props.handleCloseModal
+const { hello, handleCloseModal } = defineProps({
+  hello: String,
+  handleCloseModal: Function,
+});
+</script>
 
 <template>
   <Teleport to="#portal">
     <div class="portal-container">
-      <div role="button" tabindex="0" class="portal-underlay">
+      <div
+        role="button"
+        tabindex="0"
+        class="portal-underlay"
+        @click="handleCloseModal"
+      >
         <div class="portal-content">
           <slot />
         </div>
