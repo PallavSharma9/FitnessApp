@@ -3,6 +3,8 @@ import { workoutProgram } from "../utils";
 
 defineProps({
   handleSelectWorkout: Function,
+  firstIncompleteWorkoutIndex: Number,
+  handleResetPlan: Function,
 });
 
 const workoutTypes = ["Push", "Pull", "Legs"];
@@ -11,6 +13,7 @@ const workoutTypes = ["Push", "Pull", "Legs"];
 <template>
   <section id="grid">
     <button
+      :disabled="workoutIdx > 0 && workoutIdx > firstIncompleteWorkoutIndex"
       @click="() => handleSelectWorkout(workoutIdx)"
       :key="workoutIdx"
       v-for="(workout, workoutIdx) in Object.keys(workoutProgram)"
@@ -26,6 +29,14 @@ const workoutTypes = ["Push", "Pull", "Legs"];
       </div>
       <h3>{{ workoutTypes[workoutIdx % 3] }}</h3>
     </button>
+    <button
+      :disabled="firstIncompleteWorkoutIndex != -1"
+      @click="handleResetPlan"
+      class="card-button plan-card-reset"
+    >
+      <p>Reset</p>
+      <i class="fa-solid fa-rotate-left"></i>
+    </button>
   </section>
 </template>
 
@@ -40,9 +51,21 @@ const workoutTypes = ["Push", "Pull", "Legs"];
   width: 100%;
 }
 
+#grid button:disabled {
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 .plan-card {
   display: flex;
   flex-direction: column;
+}
+
+.plan-card-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .plan-card div {

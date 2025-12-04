@@ -6,7 +6,7 @@ import Workout from "./components/pages/Workout.vue";
 
 import { workoutProgram } from "./utils";
 
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 const defaultData = {};
 for (let workoutIdx in workoutProgram) {
@@ -26,6 +26,33 @@ const selectedDisplay = ref(1);
 const data = ref(defaultData);
 const selectedWorkout = ref(-1);
 
+const isWorkoutComplete = computed(() => {
+  const currWorkout = data.value?.[selectedWorkout.value];
+
+  if (!currWorkout) {
+    return false;
+  }
+
+  const isCompleteCheck = Object.values(currWorkout).every((ex) => !!ex);
+  console.log("iscomp ", isCompleteCheck);
+  return isCompleteCheck;
+});
+
+const firstIncompleteWorkoutIndex = computed(() => {
+  const allWorkouts = data.value;
+  if (!allWorkouts) {
+    return -1;
+  }
+
+  for (const [index, workout] of Object.entries(allWorkouts)) {
+    const isComplete = Object.values(workout).every((ex) => !!ex);
+    if (!isComplete) {
+      return parseInt(index);
+    }
+  }
+  return -1; // all are complete
+});
+
 function handleChangeDisplay(idx) {
   selectedDisplay.value = idx;
 }
@@ -42,6 +69,24 @@ function handleSaveWorkout() {
 
   selectedWorkout.value = -1;
 }
+
+function handleResetPlan() {
+  selectedDisplay.value = 2;
+  selectedWorkout.value = -1;
+  data.value = defaultData;
+  localStorage.removeItem("workouts");
+}
+
+onMounted(() => {
+  if (!localStorage) {
+    return;
+  }
+  if (localStorage.getItem("workouts")) {
+    const savedData = JSON.parse(localStorage.getItem("workouts"));
+    data.value = savedData;
+    selectedDisplay.value = 2;
+  }
+});
 </script>
 
 <template>
@@ -52,9 +97,13 @@ function handleSaveWorkout() {
     />
     <Dashboard
       :handleSelectWorkout="handleSelectWorkout"
+      :firstIncompleteWorkoutIndex="firstIncompleteWorkoutIndex"
+      :handleResetPlan="handleResetPlan"
       v-if="selectedDisplay == 2"
     />
     <Workout
+      :handleSaveWorkout="handleSaveWorkout"
+      :isWorkoutComplete="isWorkoutComplete"
       :data="data"
       :selectedWorkout="selectedWorkout"
       v-if="workoutProgram?.[selectedWorkout]"
