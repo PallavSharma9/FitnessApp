@@ -2,7 +2,7 @@
 
 <template>
   <header>
-    <h1 class="text-gradient">Fitness Journey</h1>
+    <h1 class="text-gradient">fitnessappPallav</h1>
   </header>
   <main>
     <slot />
